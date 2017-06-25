@@ -11,7 +11,8 @@
 # 
 # You do not need to modify this section.
 
-# In[34]:
+# In[1]:
+
 
 # Load pickled data
 import pickle
@@ -42,7 +43,8 @@ X_test, y_test = test['features'], test['labels']
 # 
 # You do not need to modify this section.
 
-# In[22]:
+# In[2]:
+
 
 #import numpy as np
 
@@ -60,19 +62,20 @@ print("Updated Image Shape: {}".format(X_train[0].shape))
 # 
 # You do not need to modify this section.
 
-# In[35]:
+# In[3]:
 
-#import random
-#import numpy as np
-#import matplotlib.pyplot as plt
-#get_ipython().magic(u'matplotlib inline')
 
-#index = random.randint(0, len(X_train))
-#image = X_train[index].squeeze()
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+get_ipython().magic('matplotlib inline')
 
-#plt.figure(figsize=(1,1))
-#plt.imshow(image)
-#print(y_train[index])
+index = random.randint(0, len(X_train))
+image = X_train[index].squeeze()
+
+plt.figure(figsize=(1,1))
+plt.imshow(image)
+print(y_train[index])
 
 
 # ## Preprocess Data
@@ -81,7 +84,8 @@ print("Updated Image Shape: {}".format(X_train[0].shape))
 # 
 # You do not need to modify this section.
 
-# In[36]:
+# In[4]:
+
 
 from sklearn.utils import shuffle
 
@@ -93,7 +97,8 @@ X_train, y_train = shuffle(X_train, y_train)
 # 
 # You do not need to modify this section.
 
-# In[37]:
+# In[5]:
+
 
 import tensorflow as tf
 
@@ -136,7 +141,8 @@ BATCH_SIZE = 128
 # ### Output
 # Return the result of the 2nd fully connected layer.
 
-# In[38]:
+# In[6]:
+
 
 from tensorflow.contrib.layers import flatten
 
@@ -202,14 +208,16 @@ def LeNet(x):
 # 
 # You do not need to modify this section.
 
-# In[39]:
+# In[7]:
+
 
 x = tf.placeholder(tf.float32, (None, 32, 32, 3))
 y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, 43)
 
 
-# In[40]:
+# In[8]:
+
 
 rate = 0.001
 
@@ -225,7 +233,8 @@ training_operation = optimizer.minimize(loss_operation)
 # 
 # You do not need to modify this section.
 
-# In[41]:
+# In[9]:
+
 
 correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
 accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -253,7 +262,8 @@ def evaluate(X_data, y_data):
 # 
 # You do not need to modify this section.
 
-# In[ ]:
+# In[10]:
+
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
@@ -290,6 +300,7 @@ with tf.Session() as sess:
 
 # In[ ]:
 
+
 with tf.Session() as sess:
     saver.restore(sess, tf.train.latest_checkpoint('.'))
 
@@ -298,6 +309,7 @@ with tf.Session() as sess:
 
 
 # In[ ]:
+
 
 
 
