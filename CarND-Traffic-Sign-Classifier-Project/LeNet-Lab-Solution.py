@@ -11,26 +11,27 @@
 # 
 # You do not need to modify this section.
 
-# In[1]:
+# In[34]:
 
+# Load pickled data
+import pickle
 
-from tensorflow.examples.tutorials.mnist import input_data
+# TODO: Fill this in based on where you saved the training and testing data
 
-mnist = input_data.read_data_sets("MNIST_data/", reshape=False)
-X_train, y_train           = mnist.train.images, mnist.train.labels
-X_validation, y_validation = mnist.validation.images, mnist.validation.labels
-X_test, y_test             = mnist.test.images, mnist.test.labels
+training_file = 'train.p'
+validation_file= 'valid.p'
+testing_file = 'test.p'
 
-assert(len(X_train) == len(y_train))
-assert(len(X_validation) == len(y_validation))
-assert(len(X_test) == len(y_test))
-
-print()
-print("Image Shape: {}".format(X_train[0].shape))
-print()
-print("Training Set:   {} samples".format(len(X_train)))
-print("Validation Set: {} samples".format(len(X_validation)))
-print("Test Set:       {} samples".format(len(X_test)))
+with open(training_file, mode='rb') as f:
+    train = pickle.load(f)
+with open(validation_file, mode='rb') as f:
+    valid = pickle.load(f)
+with open(testing_file, mode='rb') as f:
+    test = pickle.load(f)
+    
+X_train, y_train = train['features'], train['labels']
+X_valid, y_valid = valid['features'], valid['labels']
+X_test, y_test = test['features'], test['labels']
 
 
 # The MNIST data that TensorFlow pre-loads comes as 28x28x1 images.
@@ -41,15 +42,14 @@ print("Test Set:       {} samples".format(len(X_test)))
 # 
 # You do not need to modify this section.
 
-# In[2]:
+# In[22]:
 
-
-import numpy as np
+#import numpy as np
 
 # Pad images with 0s
-X_train      = np.pad(X_train, ((0,0),(2,2),(2,2),(0,0)), 'constant')
-X_validation = np.pad(X_validation, ((0,0),(2,2),(2,2),(0,0)), 'constant')
-X_test       = np.pad(X_test, ((0,0),(2,2),(2,2),(0,0)), 'constant')
+#X_train      = np.pad(X_train, ((0,0),(2,2),(2,2),(0,0)), 'constant')
+#X_valid = np.pad(X_valid, ((0,0),(2,2),(2,2),(0,0)), 'constant')
+#X_test       = np.pad(X_test, ((0,0),(2,2),(2,2),(0,0)), 'constant')
     
 print("Updated Image Shape: {}".format(X_train[0].shape))
 
@@ -60,19 +60,18 @@ print("Updated Image Shape: {}".format(X_train[0].shape))
 # 
 # You do not need to modify this section.
 
-# In[3]:
-
+# In[35]:
 
 #import random
 #import numpy as np
 #import matplotlib.pyplot as plt
-#get_ipython().magic('matplotlib inline')
+#get_ipython().magic(u'matplotlib inline')
 
 #index = random.randint(0, len(X_train))
 #image = X_train[index].squeeze()
 
 #plt.figure(figsize=(1,1))
-#plt.imshow(image, cmap="gray")
+#plt.imshow(image)
 #print(y_train[index])
 
 
@@ -82,8 +81,7 @@ print("Updated Image Shape: {}".format(X_train[0].shape))
 # 
 # You do not need to modify this section.
 
-# In[4]:
-
+# In[36]:
 
 from sklearn.utils import shuffle
 
@@ -95,8 +93,7 @@ X_train, y_train = shuffle(X_train, y_train)
 # 
 # You do not need to modify this section.
 
-# In[5]:
-
+# In[37]:
 
 import tensorflow as tf
 
@@ -139,8 +136,7 @@ BATCH_SIZE = 128
 # ### Output
 # Return the result of the 2nd fully connected layer.
 
-# In[6]:
-
+# In[38]:
 
 from tensorflow.contrib.layers import flatten
 
@@ -150,7 +146,7 @@ def LeNet(x):
     sigma = 0.1
     
     # SOLUTION: Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x6.
-    conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 1, 6), mean = mu, stddev = sigma))
+    conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 3, 6), mean = mu, stddev = sigma))
     conv1_b = tf.Variable(tf.zeros(6))
     conv1   = tf.nn.conv2d(x, conv1_W, strides=[1, 1, 1, 1], padding='VALID') + conv1_b
 
@@ -191,8 +187,8 @@ def LeNet(x):
     fc2    = tf.nn.relu(fc2)
 
     # SOLUTION: Layer 5: Fully Connected. Input = 84. Output = 10.
-    fc3_W  = tf.Variable(tf.truncated_normal(shape=(84, 10), mean = mu, stddev = sigma))
-    fc3_b  = tf.Variable(tf.zeros(10))
+    fc3_W  = tf.Variable(tf.truncated_normal(shape=(84, 43), mean = mu, stddev = sigma))
+    fc3_b  = tf.Variable(tf.zeros(43))
     logits = tf.matmul(fc2, fc3_W) + fc3_b
     
     return logits
@@ -206,21 +202,14 @@ def LeNet(x):
 # 
 # You do not need to modify this section.
 
-# In[7]:
+# In[39]:
 
-
-x = tf.placeholder(tf.float32, (None, 32, 32, 1))
+x = tf.placeholder(tf.float32, (None, 32, 32, 3))
 y = tf.placeholder(tf.int32, (None))
-one_hot_y = tf.one_hot(y, 10)
+one_hot_y = tf.one_hot(y, 43)
 
 
-# ## Training Pipeline
-# Create a training pipeline that uses the model to classify MNIST data.
-# 
-# You do not need to modify this section.
-
-# In[8]:
-
+# In[40]:
 
 rate = 0.001
 
@@ -236,8 +225,7 @@ training_operation = optimizer.minimize(loss_operation)
 # 
 # You do not need to modify this section.
 
-# In[9]:
-
+# In[41]:
 
 correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
 accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -265,8 +253,7 @@ def evaluate(X_data, y_data):
 # 
 # You do not need to modify this section.
 
-# In[10]:
-
+# In[ ]:
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
@@ -276,12 +263,14 @@ with tf.Session() as sess:
     print()
     for i in range(EPOCHS):
         X_train, y_train = shuffle(X_train, y_train)
+        #print (num_examples)
         for offset in range(0, num_examples, BATCH_SIZE):
+            #print ("Offset: ", offset)
             end = offset + BATCH_SIZE
             batch_x, batch_y = X_train[offset:end], y_train[offset:end]
             sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
             
-        validation_accuracy = evaluate(X_validation, y_validation)
+        validation_accuracy = evaluate(X_valid, y_valid)
         print("EPOCH {} ...".format(i+1))
         print("Validation Accuracy = {:.3f}".format(validation_accuracy))
         print()
@@ -299,8 +288,7 @@ with tf.Session() as sess:
 # 
 # You do not need to modify this section.
 
-# In[11]:
-
+# In[ ]:
 
 with tf.Session() as sess:
     saver.restore(sess, tf.train.latest_checkpoint('.'))
@@ -310,7 +298,6 @@ with tf.Session() as sess:
 
 
 # In[ ]:
-
 
 
 
