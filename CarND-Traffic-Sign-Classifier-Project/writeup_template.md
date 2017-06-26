@@ -45,15 +45,15 @@ You're reading it! and here is a link to my [project code](https://github.com/ud
 I used the pandas library to calculate summary statistics of the traffic
 signs data set:
 
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+* The size of training set is 34799 (counted using: X_train_un.shape[0] or len(X_train_un))
+* The size of the validation set is 4410 (counted using: X_valid_un.shape[0] or len(X_valid_un))
+* The size of test set is 12630 (counted using: X_test_un.shape[0] or len(X_test_un))
+* The shape of a traffic sign image is (32,32,3) (counted using: X_train_un.shape[1:4])
+* The number of unique classes/labels in the data set is 43 (counted using: np.unique(y_train).size or len(set(y_train)))
 
 ####2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed.
 
 ![alt text][image1]
 
