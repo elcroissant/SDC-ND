@@ -53,7 +53,7 @@ signs data set:
 
 ####2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed.
+Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed. From that distribution we can easily read that some of the traffic signs come out much often then the others. This most likely will lead to the misclasification problem of the small classes. 
 
 ![alt text][image1]
 

@@ -22,7 +22,7 @@
 # ---
 # ## Step 0: Load The Data
 
-# In[88]:
+# In[2]:
 
 # Load pickled data
 import pickle
@@ -60,7 +60,7 @@ X_test_un, y_test = test['features'], test['labels']
 
 # ### Provide a Basic Summary of the Data Set Using Python, Numpy and/or Pandas
 
-# In[89]:
+# In[3]:
 
 ### Replace each question mark with the appropriate value. 
 ### Use python, pandas or numpy methods rather than hard coding the results
@@ -99,7 +99,7 @@ print("Number of classes =", n_classes)
 # 
 # **NOTE:** It's recommended you start with something simple first. If you wish to do more, come back to it after you've completed the rest of the sections. It can be interesting to look at the distribution of classes in the training, validation and test set. Is the distribution the same? Are there more examples of some classes than others?
 
-# In[90]:
+# In[4]:
 
 ### Data exploration visualization code goes here.
 ### Feel free to use as many code cells as needed.
@@ -168,19 +168,33 @@ plt.show()
 # 
 # Use the code cell (or multiple code cells, if necessary) to implement the first step of your project.
 
-# In[91]:
+# In[5]:
 
 import cv2
-def grayscale(img):
-    """Applies the Grayscale transform
-    This will return an image with only one color channel
-    but NOTE: to see the returned image as grayscale
-    (assuming your grayscaled image is called 'gray')
-    you should call plt.imshow(gray, cmap='gray')"""
-    return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+def grayscale(image):
+    return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+def normalize(data):
+    const = 128
+    image = data.astype(np.float)
+    image = (image - const) / const
+    #np.reshape(image, (32,32,1))
+    #cv2.normalize(image, dst, alpha=-1, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)     
+    return image
+
+def preprocess(data):
+    preprocessed_data = []
+    dst = np.zeros(shape=(32,32,3))
+    const = 128
+    for image in data:
+        image = grayscale(image)
+        image = normalize(image)
+        
+        preprocessed_data.append(image)
+    return np.array(preprocessed_data)
 
 
-# In[92]:
+# In[6]:
 
 ### Preprocess the data here. It is required to normalize the data. Other preprocessing steps could include 
 ### converting to grayscale, etc.
@@ -194,28 +208,20 @@ X_train_un, y_train = shuffle(X_train_un, y_train)
 #print (X_train_norm)
 #X_train = stats.norm.pdf(X_train, np.mean(X_train), np.std(X_train))
 
-
-def normalize(data):
-    normalized_data = []
-    dst = np.zeros(shape=(32,32,3))
-    const = 128
-    for image in data:
-        #local normalization done manually
-        #image = image.astype(np.float)
-        #image = (image - const) / const
-        image = cv2.normalize(image, dst, alpha=-1, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)  
-        #image = grayscale(image)
-        normalized_data.append(image)
-    return normalized_data
-
-X_train = normalize(X_train_un)
-X_valid = normalize(X_valid_un)
-X_test = normalize(X_test_un)
-
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy import newaxis
 get_ipython().magic('matplotlib inline')
+
+X_train = preprocess(X_train_un)
+X_train = X_train[..., newaxis]
+
+X_valid = preprocess(X_valid_un)
+X_valid = X_valid[..., newaxis]
+
+X_test = preprocess(X_test_un)
+X_test = X_test[..., newaxis]
 
 index = random.randint(0, len(X_train))
 
@@ -233,7 +239,7 @@ print(y_train[index])
 
 # ### Model Architecture
 
-# In[93]:
+# In[12]:
 
 ### Define your architecture here.
 ### Feel free to use as many code cells as needed.
@@ -251,12 +257,15 @@ def MyNet(x):
     
     ch_conv1 = 64
     # SOLUTION: Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x6.
-    conv1_W = tf.Variable(tf.truncated_normal(shape=(3, 3, 3, ch_conv1), mean = mu, stddev = sigma))
+    conv1_W = tf.Variable(tf.truncated_normal(shape=(3, 3, 1, ch_conv1), mean = mu, stddev = sigma))
     conv1_b = tf.Variable(tf.zeros(ch_conv1))
     conv1   = tf.nn.conv2d(x, conv1_W, strides=[1, 1, 1, 1], padding='VALID') + conv1_b
 
     # SOLUTION: Activation.
     conv1 = tf.nn.relu(conv1)
+    
+    keep_prob=0.7
+    #conv1 = tf.nn.dropout(conv1, keep_prob)
 
     # SOLUTION: Pooling. Input = 28x28x6. Output = 14x14x6.
     conv1 = tf.nn.max_pool(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
@@ -269,6 +278,7 @@ def MyNet(x):
     
     # SOLUTION: Activation.
     conv2 = tf.nn.relu(conv2)
+    #conv2 = tf.nn.dropout(conv2, keep_prob)
 
     # SOLUTION: Pooling. Input = 10x10x16. Output = 5x5x16.
     conv2 = tf.nn.max_pool(conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
@@ -283,7 +293,7 @@ def MyNet(x):
     
     # SOLUTION: Activation.
     fc1    = tf.nn.relu(fc1)
-    #fc1    = tf.nn.dropout(fc1, 0.5)
+    fc1    = tf.nn.dropout(fc1, keep_prob)
 
 
     # SOLUTION: Layer 4: Fully Connected. Input = 120. Output = 84.
@@ -293,7 +303,7 @@ def MyNet(x):
     
     # SOLUTION: Activation.
     fc2    = tf.nn.relu(fc2)
-    #fc2    = tf.nn.dropout(fc2, 0.5)
+    fc2    = tf.nn.dropout(fc2, keep_prob)
 
     # SOLUTION: Layer 5: Fully Connected. Input = 84. Output = 10.
     fc3_W  = tf.Variable(tf.truncated_normal(shape=(84, 43), mean = mu, stddev = sigma))
@@ -308,7 +318,7 @@ def MyNet(x):
 # A validation set can be used to assess how well the model is performing. A low accuracy on the training and validation
 # sets imply underfitting. A high accuracy on the training set but low accuracy on the validation set implies overfitting.
 
-# In[94]:
+# In[13]:
 
 ### Train your model here.
 ### Calculate and report the accuracy on the training and validation set.
@@ -320,12 +330,12 @@ def MyNet(x):
 ## Train LeNet to classify German traffic signs data.
 ## x is a placeholder for a batch of input images. y is a placeholder for a batch of output labels.
 
-x = tf.placeholder(tf.float32, (None, 32, 32, 3))
+x = tf.placeholder(tf.float32, (None, 32, 32, 1))
 y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, 43)
 
 
-# In[95]:
+# In[14]:
 
 rate = 0.001
 
@@ -336,7 +346,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate = rate)
 training_operation = optimizer.minimize(loss_operation)
 
 
-# In[96]:
+# In[15]:
 
 ###Model Evaluation
 #Evaluate how well the loss and accuracy of the model for a given dataset.
@@ -358,7 +368,7 @@ def evaluate(X_data, y_data):
     return total_accuracy / num_examples
 
 
-# In[97]:
+# In[16]:
 
 ### Train the Model
 # Run the training data through the training pipeline to train the model.
@@ -391,7 +401,7 @@ with tf.Session() as sess:
     print("Model saved")
 
 
-# In[98]:
+# In[23]:
 
 ### Evaluate the Model
 # Once you are completely satisfied with your model, evaluate the performance of the model on the test set.
