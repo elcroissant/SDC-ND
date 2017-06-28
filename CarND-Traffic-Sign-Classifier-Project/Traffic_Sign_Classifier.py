@@ -22,7 +22,7 @@
 # ---
 # ## Step 0: Load The Data
 
-# In[1]:
+# In[88]:
 
 # Load pickled data
 import pickle
@@ -60,7 +60,7 @@ X_test_un, y_test = test['features'], test['labels']
 
 # ### Provide a Basic Summary of the Data Set Using Python, Numpy and/or Pandas
 
-# In[2]:
+# In[89]:
 
 ### Replace each question mark with the appropriate value. 
 ### Use python, pandas or numpy methods rather than hard coding the results
@@ -99,7 +99,7 @@ print("Number of classes =", n_classes)
 # 
 # **NOTE:** It's recommended you start with something simple first. If you wish to do more, come back to it after you've completed the rest of the sections. It can be interesting to look at the distribution of classes in the training, validation and test set. Is the distribution the same? Are there more examples of some classes than others?
 
-# In[3]:
+# In[90]:
 
 ### Data exploration visualization code goes here.
 ### Feel free to use as many code cells as needed.
@@ -168,7 +168,7 @@ plt.show()
 # 
 # Use the code cell (or multiple code cells, if necessary) to implement the first step of your project.
 
-# In[4]:
+# In[91]:
 
 import cv2
 def grayscale(img):
@@ -180,7 +180,7 @@ def grayscale(img):
     return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
 
-# In[5]:
+# In[92]:
 
 ### Preprocess the data here. It is required to normalize the data. Other preprocessing steps could include 
 ### converting to grayscale, etc.
@@ -233,14 +233,14 @@ print(y_train[index])
 
 # ### Model Architecture
 
-# In[30]:
+# In[93]:
 
 ### Define your architecture here.
 ### Feel free to use as many code cells as needed.
 import tensorflow as tf
 
 EPOCHS = 30
-BATCH_SIZE = 128
+BATCH_SIZE = 64
 
 from tensorflow.contrib.layers import flatten
 
@@ -262,8 +262,8 @@ def MyNet(x):
     conv1 = tf.nn.max_pool(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
 
     # SOLUTION: Layer 2: Convolutional. Output = 10x10x16.
-    ch_conv2 = 16
-    conv2_W = tf.Variable(tf.truncated_normal(shape=(5, 5, ch_conv1, ch_conv2), mean = mu, stddev = sigma))
+    ch_conv2 = 64
+    conv2_W = tf.Variable(tf.truncated_normal(shape=(3, 3, ch_conv1, ch_conv2), mean = mu, stddev = sigma))
     conv2_b = tf.Variable(tf.zeros(ch_conv2))
     conv2   = tf.nn.conv2d(conv1, conv2_W, strides=[1, 1, 1, 1], padding='VALID') + conv2_b
     
@@ -277,7 +277,7 @@ def MyNet(x):
     fc0   = flatten(conv2)
     
     # SOLUTION: Layer 3: Fully Connected. Input = 400. Output = 120.
-    fc1_W = tf.Variable(tf.truncated_normal(shape=(400, 120), mean = mu, stddev = sigma))
+    fc1_W = tf.Variable(tf.truncated_normal(shape=(2304, 120), mean = mu, stddev = sigma))
     fc1_b = tf.Variable(tf.zeros(120))
     fc1   = tf.matmul(fc0, fc1_W) + fc1_b
     
@@ -308,7 +308,7 @@ def MyNet(x):
 # A validation set can be used to assess how well the model is performing. A low accuracy on the training and validation
 # sets imply underfitting. A high accuracy on the training set but low accuracy on the validation set implies overfitting.
 
-# In[31]:
+# In[94]:
 
 ### Train your model here.
 ### Calculate and report the accuracy on the training and validation set.
@@ -325,7 +325,7 @@ y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, 43)
 
 
-# In[32]:
+# In[95]:
 
 rate = 0.001
 
@@ -336,7 +336,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate = rate)
 training_operation = optimizer.minimize(loss_operation)
 
 
-# In[33]:
+# In[96]:
 
 ###Model Evaluation
 #Evaluate how well the loss and accuracy of the model for a given dataset.
@@ -358,7 +358,7 @@ def evaluate(X_data, y_data):
     return total_accuracy / num_examples
 
 
-# In[ ]:
+# In[97]:
 
 ### Train the Model
 # Run the training data through the training pipeline to train the model.
@@ -387,11 +387,11 @@ with tf.Session() as sess:
         print("Validation Accuracy = {:.3f}".format(validation_accuracy))
         print()
         
-    saver.save(sess, './lenet')
+    saver.save(sess, './mynet')
     print("Model saved")
 
 
-# In[19]:
+# In[98]:
 
 ### Evaluate the Model
 # Once you are completely satisfied with your model, evaluate the performance of the model on the test set.
