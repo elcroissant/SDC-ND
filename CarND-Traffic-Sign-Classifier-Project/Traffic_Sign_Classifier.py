@@ -24,7 +24,6 @@
 
 # In[1]:
 
-
 # Load pickled data
 import pickle
 
@@ -41,9 +40,9 @@ with open(validation_file, mode='rb') as f:
 with open(testing_file, mode='rb') as f:
     test = pickle.load(f)
     
-X_train, y_train = train['features'], train['labels']
-X_valid, y_valid = valid['features'], valid['labels']
-X_test, y_test = test['features'], test['labels']
+X_train_un, y_train = train['features'], train['labels']
+X_valid_un, y_valid = valid['features'], valid['labels']
+X_test_un, y_test = test['features'], test['labels']
 
 
 # ---
@@ -61,26 +60,29 @@ X_test, y_test = test['features'], test['labels']
 
 # ### Provide a Basic Summary of the Data Set Using Python, Numpy and/or Pandas
 
-# In[13]:
-
+# In[2]:
 
 ### Replace each question mark with the appropriate value. 
 ### Use python, pandas or numpy methods rather than hard coding the results
+import numpy as np
 
 # TODO: Number of training examples
-n_train = len(X_train)
+n_train = X_train_un.shape[0]
 
 # TODO: Number of validation examples
-n_validation = len(X_valid)
+n_validation = X_valid_un.shape[0]
 
 # TODO: Number of testing examples.
-n_test = len(X_test)
+n_test = X_test_un.shape[0]
 
 # TODO: What's the shape of an traffic sign image?
-image_shape = X_train[0].shape
+image_shape = X_train_un.shape[1:4]
 
 # TODO: How many unique classes/labels there are in the dataset.
-n_classes = len(set(y_train))
+n_classes = np.unique(y_train).size
+
+#len(set(y_train))
+
 
 print("Number of training examples =", n_train)
 print("Number of validation examples =", n_validation)
@@ -97,8 +99,7 @@ print("Number of classes =", n_classes)
 # 
 # **NOTE:** It's recommended you start with something simple first. If you wish to do more, come back to it after you've completed the rest of the sections. It can be interesting to look at the distribution of classes in the training, validation and test set. Is the distribution the same? Are there more examples of some classes than others?
 
-# In[68]:
-
+# In[3]:
 
 ### Data exploration visualization code goes here.
 ### Feel free to use as many code cells as needed.
@@ -107,6 +108,7 @@ import matplotlib.pyplot as plt
 get_ipython().magic('matplotlib inline')
 
 import numpy as np
+from scipy import stats
 
 y_train_dist = sorted(y_train)  
 y_valid_dist = sorted(y_valid)  
@@ -116,6 +118,7 @@ y_test_dist = sorted(y_test)
 y_train_fit = stats.norm.pdf(y_train_dist, np.mean(y_train_dist), np.std(y_train_dist))
 y_valid_fit = stats.norm.pdf(y_valid_dist, np.mean(y_valid_dist), np.std(y_valid_dist))
 y_test_fit = stats.norm.pdf(y_test_dist, np.mean(y_test_dist), np.std(y_test_dist))
+
 
 plt.subplot(3, 1, 1)
 plt.plot(y_train_dist,y_train_fit,'ko-')
@@ -165,40 +168,91 @@ plt.show()
 # 
 # Use the code cell (or multiple code cells, if necessary) to implement the first step of your project.
 
-# In[72]:
+# In[4]:
 
+import cv2
+def grayscale(img):
+    """Applies the Grayscale transform
+    This will return an image with only one color channel
+    but NOTE: to see the returned image as grayscale
+    (assuming your grayscaled image is called 'gray')
+    you should call plt.imshow(gray, cmap='gray')"""
+    return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+
+# In[5]:
 
 ### Preprocess the data here. It is required to normalize the data. Other preprocessing steps could include 
 ### converting to grayscale, etc.
 ### Feel free to use as many code cells as needed.
 
 from sklearn.utils import shuffle
+X_train_un, y_train = shuffle(X_train_un, y_train)
 
-X_train, y_train = shuffle(X_train, y_train)
+#print (X_train[0])
+#X_train_norm = stats.norm.pdf(X_train[0], np.mean(X_train[0]), np.std(X_train[0]))
+#print (X_train_norm)
+#X_train = stats.norm.pdf(X_train, np.mean(X_train), np.std(X_train))
+
+
+def normalize(data):
+    normalized_data = []
+    dst = np.zeros(shape=(32,32,3))
+    const = 128
+    for image in data:
+        #local normalization done manually
+        #image = image.astype(np.float)
+        #image = (image - const) / const
+        image = cv2.normalize(image, dst, alpha=-1, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)  
+        #image = grayscale(image)
+        normalized_data.append(image)
+    return normalized_data
+
+X_train = normalize(X_train_un)
+X_valid = normalize(X_valid_un)
+X_test = normalize(X_test_un)
+
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+get_ipython().magic('matplotlib inline')
+
+index = random.randint(0, len(X_train))
+
+image = X_train[index].squeeze()
+image2 = X_train_un[index].squeeze()
+
+plt.figure(figsize=(1,1))
+plt.imshow(image, cmap='gray')
+
+plt.figure(figsize=(1,2))
+plt.imshow(image2, cmap='gray')
+
+print(y_train[index])
 
 
 # ### Model Architecture
 
-# In[73]:
-
+# In[30]:
 
 ### Define your architecture here.
 ### Feel free to use as many code cells as needed.
 import tensorflow as tf
 
-EPOCHS = 10
+EPOCHS = 30
 BATCH_SIZE = 128
 
 from tensorflow.contrib.layers import flatten
 
-def LeNet(x):    
+def MyNet(x):    
     # Arguments used for tf.truncated_normal, randomly defines variables for the weights and biases for each layer
     mu = 0
     sigma = 0.1
     
+    ch_conv1 = 64
     # SOLUTION: Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x6.
-    conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 3, 6), mean = mu, stddev = sigma))
-    conv1_b = tf.Variable(tf.zeros(6))
+    conv1_W = tf.Variable(tf.truncated_normal(shape=(3, 3, 3, ch_conv1), mean = mu, stddev = sigma))
+    conv1_b = tf.Variable(tf.zeros(ch_conv1))
     conv1   = tf.nn.conv2d(x, conv1_W, strides=[1, 1, 1, 1], padding='VALID') + conv1_b
 
     # SOLUTION: Activation.
@@ -208,8 +262,9 @@ def LeNet(x):
     conv1 = tf.nn.max_pool(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
 
     # SOLUTION: Layer 2: Convolutional. Output = 10x10x16.
-    conv2_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 6, 16), mean = mu, stddev = sigma))
-    conv2_b = tf.Variable(tf.zeros(16))
+    ch_conv2 = 16
+    conv2_W = tf.Variable(tf.truncated_normal(shape=(5, 5, ch_conv1, ch_conv2), mean = mu, stddev = sigma))
+    conv2_b = tf.Variable(tf.zeros(ch_conv2))
     conv2   = tf.nn.conv2d(conv1, conv2_W, strides=[1, 1, 1, 1], padding='VALID') + conv2_b
     
     # SOLUTION: Activation.
@@ -228,6 +283,8 @@ def LeNet(x):
     
     # SOLUTION: Activation.
     fc1    = tf.nn.relu(fc1)
+    #fc1    = tf.nn.dropout(fc1, 0.5)
+
 
     # SOLUTION: Layer 4: Fully Connected. Input = 120. Output = 84.
     fc2_W  = tf.Variable(tf.truncated_normal(shape=(120, 84), mean = mu, stddev = sigma))
@@ -236,6 +293,7 @@ def LeNet(x):
     
     # SOLUTION: Activation.
     fc2    = tf.nn.relu(fc2)
+    #fc2    = tf.nn.dropout(fc2, 0.5)
 
     # SOLUTION: Layer 5: Fully Connected. Input = 84. Output = 10.
     fc3_W  = tf.Variable(tf.truncated_normal(shape=(84, 43), mean = mu, stddev = sigma))
@@ -250,8 +308,7 @@ def LeNet(x):
 # A validation set can be used to assess how well the model is performing. A low accuracy on the training and validation
 # sets imply underfitting. A high accuracy on the training set but low accuracy on the validation set implies overfitting.
 
-# In[74]:
-
+# In[31]:
 
 ### Train your model here.
 ### Calculate and report the accuracy on the training and validation set.
@@ -268,20 +325,18 @@ y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, 43)
 
 
-# In[75]:
-
+# In[32]:
 
 rate = 0.001
 
-logits = LeNet(x)
+logits = MyNet(x)
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
 loss_operation = tf.reduce_mean(cross_entropy)
 optimizer = tf.train.AdamOptimizer(learning_rate = rate)
 training_operation = optimizer.minimize(loss_operation)
 
 
-# In[76]:
-
+# In[33]:
 
 ###Model Evaluation
 #Evaluate how well the loss and accuracy of the model for a given dataset.
@@ -303,8 +358,7 @@ def evaluate(X_data, y_data):
     return total_accuracy / num_examples
 
 
-# In[77]:
-
+# In[ ]:
 
 ### Train the Model
 # Run the training data through the training pipeline to train the model.
@@ -337,8 +391,7 @@ with tf.Session() as sess:
     print("Model saved")
 
 
-# In[78]:
-
+# In[19]:
 
 ### Evaluate the Model
 # Once you are completely satisfied with your model, evaluate the performance of the model on the test set.
@@ -365,15 +418,13 @@ with tf.Session() as sess:
 
 # In[ ]:
 
-
 ### Load the images and plot them here.
 ### Feel free to use as many code cells as needed.
 
 
 # ### Predict the Sign Type for Each Image
 
-# In[3]:
-
+# In[ ]:
 
 ### Run the predictions here and use the model to output the prediction for each image.
 ### Make sure to pre-process the images with the same pre-processing pipeline used earlier.
@@ -382,8 +433,7 @@ with tf.Session() as sess:
 
 # ### Analyze Performance
 
-# In[4]:
-
+# In[ ]:
 
 ### Calculate the accuracy for these 5 new images. 
 ### For example, if the model predicted 1 out of 5 signs correctly, it's 20% accurate on these new images.
@@ -429,8 +479,7 @@ with tf.Session() as sess:
 # 
 # Looking just at the first row we get `[ 0.34763842,  0.24879643,  0.12789202]`, you can confirm these are the 3 largest probabilities in `a`. You'll also notice `[3, 0, 5]` are the corresponding indices.
 
-# In[3]:
-
+# In[ ]:
 
 ### Print out the top five softmax probabilities for the predictions on the German traffic sign images found on the web. 
 ### Feel free to use as many code cells as needed.
@@ -464,7 +513,6 @@ with tf.Session() as sess:
 # 
 
 # In[ ]:
-
 
 ### Visualize your network's feature maps here.
 ### Feel free to use as many code cells as needed.
