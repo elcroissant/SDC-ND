@@ -560,10 +560,35 @@ print ("Accuracy: ", np.sum(target==predictions)/len(target)*100,"%")
 # 
 # Looking just at the first row we get `[ 0.34763842,  0.24879643,  0.12789202]`, you can confirm these are the 3 largest probabilities in `a`. You'll also notice `[3, 0, 5]` are the corresponding indices.
 
-# In[ ]:
+# In[82]:
 
 ### Print out the top five softmax probabilities for the predictions on the German traffic sign images found on the web. 
 ### Feel free to use as many code cells as needed.
+
+with tf.Session() as sess:
+    output = sess.run(tf.nn.top_k(tf.constant(results), k=5))
+    print ("Softmax probabilities:")
+    print (output.values)
+    print ("Predictions:")
+    print (output.indices)
+
+    signanames = open('signnames.csv', 'r')
+    reader = csv.reader(signanames)
+    sign_dict = dict(reader)
+
+    horiz_figure = figure()
+    
+    fig, axs = plt.subplots(nrows=5, ncols = 5, sharex=False, figsize=(6, 10))
+    
+    print ('Similarity:')
+    for plt_y_index, indices in enumerate(output.indices):
+        #print ([sign_dict[str(dict_index)] for dict_index in indices])
+        # take first element from each classes which were within top5 
+        for plt_x_index, sign_index in enumerate(indices):
+            image = X_train[y_train==sign_index][0].squeeze()
+            #axs[plt_y_index,plt_x_index].set_title(sign_dict[str(indices[0])])
+            axs[plt_y_index,plt_x_index].imshow(image, cmap='gray')
+    plt.gray()
 
 
 # ### Project Writeup
