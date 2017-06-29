@@ -22,7 +22,7 @@
 # ---
 # ## Step 0: Load The Data
 
-# In[2]:
+# In[1]:
 
 # Load pickled data
 import pickle
@@ -60,7 +60,7 @@ X_test_un, y_test = test['features'], test['labels']
 
 # ### Provide a Basic Summary of the Data Set Using Python, Numpy and/or Pandas
 
-# In[3]:
+# In[2]:
 
 ### Replace each question mark with the appropriate value. 
 ### Use python, pandas or numpy methods rather than hard coding the results
@@ -99,7 +99,7 @@ print("Number of classes =", n_classes)
 # 
 # **NOTE:** It's recommended you start with something simple first. If you wish to do more, come back to it after you've completed the rest of the sections. It can be interesting to look at the distribution of classes in the training, validation and test set. Is the distribution the same? Are there more examples of some classes than others?
 
-# In[4]:
+# In[3]:
 
 ### Data exploration visualization code goes here.
 ### Feel free to use as many code cells as needed.
@@ -168,7 +168,7 @@ plt.show()
 # 
 # Use the code cell (or multiple code cells, if necessary) to implement the first step of your project.
 
-# In[5]:
+# In[4]:
 
 import cv2
 def grayscale(image):
@@ -194,7 +194,7 @@ def preprocess(data):
     return np.array(preprocessed_data)
 
 
-# In[6]:
+# In[5]:
 
 ### Preprocess the data here. It is required to normalize the data. Other preprocessing steps could include 
 ### converting to grayscale, etc.
@@ -223,6 +223,8 @@ X_valid = X_valid[..., newaxis]
 X_test = preprocess(X_test_un)
 X_test = X_test[..., newaxis]
 
+#print (X_train_un[0].shape, X_train_un[0].dtype, type(X_train_un[0]))
+
 index = random.randint(0, len(X_train))
 
 image = X_train[index].squeeze()
@@ -239,13 +241,13 @@ print(y_train[index])
 
 # ### Model Architecture
 
-# In[12]:
+# In[6]:
 
 ### Define your architecture here.
 ### Feel free to use as many code cells as needed.
 import tensorflow as tf
 
-EPOCHS = 30
+EPOCHS = 10
 BATCH_SIZE = 64
 
 from tensorflow.contrib.layers import flatten
@@ -264,7 +266,6 @@ def MyNet(x):
     # SOLUTION: Activation.
     conv1 = tf.nn.relu(conv1)
     
-    keep_prob=0.7
     #conv1 = tf.nn.dropout(conv1, keep_prob)
 
     # SOLUTION: Pooling. Input = 28x28x6. Output = 14x14x6.
@@ -283,11 +284,21 @@ def MyNet(x):
     # SOLUTION: Pooling. Input = 10x10x16. Output = 5x5x16.
     conv2 = tf.nn.max_pool(conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
 
+    
+    ch_conv3 = 64
+    conv3_W = tf.Variable(tf.truncated_normal(shape=(3, 3, ch_conv2, ch_conv3), mean = mu, stddev = sigma))
+    conv3_b = tf.Variable(tf.zeros(ch_conv3))
+    conv3   = tf.nn.conv2d(conv2, conv3_W, strides=[1, 1, 1, 1], padding='VALID') + conv3_b
+    
+    # SOLUTION: Activation.
+    conv3 = tf.nn.relu(conv3)
+    
+    
     # SOLUTION: Flatten. Input = 5x5x16. Output = 400.
-    fc0   = flatten(conv2)
+    fc0   = flatten(conv3)
     
     # SOLUTION: Layer 3: Fully Connected. Input = 400. Output = 120.
-    fc1_W = tf.Variable(tf.truncated_normal(shape=(2304, 120), mean = mu, stddev = sigma))
+    fc1_W = tf.Variable(tf.truncated_normal(shape=(1024, 120), mean = mu, stddev = sigma))
     fc1_b = tf.Variable(tf.zeros(120))
     fc1   = tf.matmul(fc0, fc1_W) + fc1_b
     
@@ -318,7 +329,7 @@ def MyNet(x):
 # A validation set can be used to assess how well the model is performing. A low accuracy on the training and validation
 # sets imply underfitting. A high accuracy on the training set but low accuracy on the validation set implies overfitting.
 
-# In[13]:
+# In[7]:
 
 ### Train your model here.
 ### Calculate and report the accuracy on the training and validation set.
@@ -332,10 +343,11 @@ def MyNet(x):
 
 x = tf.placeholder(tf.float32, (None, 32, 32, 1))
 y = tf.placeholder(tf.int32, (None))
+keep_prob = tf.placeholder(tf.float32)
 one_hot_y = tf.one_hot(y, 43)
 
 
-# In[14]:
+# In[8]:
 
 rate = 0.001
 
@@ -346,7 +358,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate = rate)
 training_operation = optimizer.minimize(loss_operation)
 
 
-# In[15]:
+# In[9]:
 
 ###Model Evaluation
 #Evaluate how well the loss and accuracy of the model for a given dataset.
@@ -363,12 +375,12 @@ def evaluate(X_data, y_data):
     sess = tf.get_default_session()
     for offset in range(0, num_examples, BATCH_SIZE):
         batch_x, batch_y = X_data[offset:offset+BATCH_SIZE], y_data[offset:offset+BATCH_SIZE]
-        accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y})
+        accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y, keep_prob : 1.0})
         total_accuracy += (accuracy * len(batch_x))
     return total_accuracy / num_examples
 
 
-# In[16]:
+# In[10]:
 
 ### Train the Model
 # Run the training data through the training pipeline to train the model.
@@ -390,7 +402,7 @@ with tf.Session() as sess:
             #print ("Offset: ", offset)
             end = offset + BATCH_SIZE
             batch_x, batch_y = X_train[offset:end], y_train[offset:end]
-            sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
+            sess.run(training_operation, feed_dict={x: batch_x, y: batch_y, keep_prob : 0.75})
             
         validation_accuracy = evaluate(X_valid, y_valid)
         print("EPOCH {} ...".format(i+1))
@@ -401,7 +413,7 @@ with tf.Session() as sess:
     print("Model saved")
 
 
-# In[23]:
+# In[11]:
 
 ### Evaluate the Model
 # Once you are completely satisfied with your model, evaluate the performance of the model on the test set.
@@ -426,27 +438,86 @@ with tf.Session() as sess:
 
 # ### Load and Output the Images
 
-# In[ ]:
+# In[12]:
 
-### Load the images and plot them here.
-### Feel free to use as many code cells as needed.
+get_ipython().magic('pylab inline')
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import os
+
+path = 'examples/TrafficSigns/'
+list_of_files = os.listdir(path)
+
+list_of_path_to_files = []
+for file_name in list_of_files:
+    #TODO: remove 002.png file as it has different shape
+    #if file_name != '002.png':
+    path_to_file = path + file_name
+    list_of_path_to_files.append(path_to_file)
+
+images = []
+images_to_display = []
+horiz_figure = figure()
+number_of_files = len(list_of_path_to_files)
+for index, path in enumerate(list_of_path_to_files):
+    horiz_figure.add_subplot(1,number_of_files,index+1)
+    image = cv2.imread(list_of_path_to_files[index],0)
+    images_to_display.append(image)
+    imshow(image,cmap='gray')
+    axis('off')
+    img = cv2.resize(image, (32, 32))
+    img = normalize(img)
+    img = np.expand_dims(img, axis=3)
+    #print (img.shape)
+    images.append(img)
 
 
 # ### Predict the Sign Type for Each Image
 
-# In[ ]:
+# In[13]:
 
 ### Run the predictions here and use the model to output the prediction for each image.
 ### Make sure to pre-process the images with the same pre-processing pipeline used earlier.
 ### Feel free to use as many code cells as needed.
+#import matplotlib.pyplot as plt
+# Visualizations will be shown in the notebook.
+#%matplotlib inline
+
+import csv
+
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
+    results = sess.run(logits, feed_dict={x: images, keep_prob : 1.0})
+    predictions = np.argmax(np.array(results),axis=1)
+    #print (predictions)
+    signanames = open('signnames.csv', 'r')
+    reader = csv.reader(signanames)
+    sign_dict = dict(reader)
+    
+    fig, axs = plt.subplots(nrows=5, sharex=False, figsize=(2, 10))
+    
+    for index, dict_index in enumerate(predictions):
+        axs[index].set_title(sign_dict[str(dict_index)])
+        axs[index].imshow(images_to_display[index])
+    plt.gray()
+    #    image = images_to_display[index]
+        #plt.figure(figsize=(1,index))
+    #    plt.imshow(image, cmap='gray')
+    #    imshow(image, cmap='gray')
+    #    print (sign_dict[str(dict_index)])
+        
 
 
 # ### Analyze Performance
 
-# In[ ]:
+# In[30]:
 
 ### Calculate the accuracy for these 5 new images. 
 ### For example, if the model predicted 1 out of 5 signs correctly, it's 20% accurate on these new images.
+target = [16, 33, 11, 38, 1]
+print ("Accuracy: ", np.sum(target==predictions)/len(target)*100,"%")
+
+
 
 
 # ### Output Top 5 Softmax Probabilities For Each Image Found on the Web
