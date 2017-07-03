@@ -28,7 +28,7 @@ The goals / steps of this project are the following:
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 | Criteria | Specification met | Status | 
-| Submission files | The project submission includes all required files: Traffic_Sing_Classifier.ipynb, Traffic_Sign_Classifier.html and writeup.md | Done | 
+| Submission files | The project submission includes all required files | Done | 
 | Dataset Summary | The submission includes a basic summary of the data set. | Done | 
 | Exploratory Visualization | The submission includes an exploratory visualization on the dataset. | Done | 
 | Preprocessing | The submission describes the preprocessing techniques used and why these techniques were chosen. | Done |
@@ -191,30 +191,78 @@ The first image might be difficult to classify because ...
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Image									| Prediction							| 
+|:-------------------------------------:|:-------------------------------------:| 
+| Right-of-way at the next intersection | Right-of-way at the next intersection | 
+| Speed limit (120km/h)    				| Speed limit (20km/h) 					|
+| Road work								| Road work								|
+| Stop									| Stop					 				|
+| Bumpy Road							| Bumpy Road      						|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of 95.9%
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in the 15th cell of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is relatively sure that this is a Right-of-way at the next intersection (probability of 0.26), and the image does contain a stop sign. The top five soft max probabilities were
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| 1.0         			| Right-of-way at the next intersection 		| 
+| .00     				| Priority road 								|
+| .00					| Beware of ice/snow							|
+| .00	      			| Double curve					 				|
+| .00				    | Roundabout mandatory      					|
 
+The model is 100% sure that the first image is Right-of-way at the next intersection. 
 
 For the second image ... 
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .95         			| Speed limit (20km/h) 							| 
+| .04     				| Children crossing 							|
+| .00					| Speed limit (120km/h)							|
+| .00	      			| General caution					 			|
+| .00				    | Roundabout mandatory      					|
+
+The model chose wrong sign with 95% certainty. It was pretty close to the target (visually) but failed.
+
+For the third image ... 
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00         			| Road work 									| 
+| .00     				| General caution 								|
+| .00					| Dangerous curve to the right)					|
+| .00	      			| Speed limit (70km/h)					 		|
+| .00				    | Go straight or right      					|
+
+The model 99.95% sure that the given traffic sign was Road work which is correct.  
+
+    
+For the forth image ... 
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .87         			| Stop 											| 
+| .11     				| Speed limit (60km/h) 							|
+| .00					| Speed limit (50km/h)							|
+| .00	      			| Turn left ahead					 			|
+| .00				    | Speed limit (80km/h      						|
+
+The model was pretty much certain that the traffic sign was a Stop, which is correct.
+    
+For the fifth image ... 
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00         			| Bumpy road 									| 
+| .00     				| Keep right 									|
+| .00					| Stop											|
+| .00	      			| Bicycles crossing				 				|
+| .00				    | Traffic signals     							|
+
+100% certainty for the last image. 
