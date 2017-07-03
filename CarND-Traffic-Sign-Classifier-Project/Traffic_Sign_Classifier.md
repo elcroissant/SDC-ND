@@ -170,8 +170,11 @@ If Train, Validation and Test accuracies are all high it means final model works
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8] 
+![alt text][image4] 
+![alt text][image5] 
+![alt text][image6] 
+![alt text][image7] 
+![alt text][image8] 
 
 The first image might be difficult to classify because is partly hidden and there are twigs which introduce some clutter to the picture. The second picture may also be hard to recognize as not all edges are visible on the picture. The third picture of stop sign was taken at an angle, so this also may be little tricky to classify. The forth picture may cause troble due to displacement. The last but least will cause problme for the classifier because it's partly hidden.  
 
