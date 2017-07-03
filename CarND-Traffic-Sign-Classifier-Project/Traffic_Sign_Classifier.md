@@ -20,9 +20,9 @@ The goals / steps of this project are the following:
 [image3]: ./examples/random_noise.jpg "Random Noise"
 [image4]: ./examples/TrafficSigns/00005.PNG "Traffic Sign 1"
 [image5]: ./examples/TrafficSigns/00006.PNG "Traffic Sign 2"
-[image6]: ./examples/TrafficSigns/00007.PNG "Traffic Sign 3"
-[image7]: ./examples/TrafficSigns/00008.PNG "Traffic Sign 4"
-[image8]: ./examples/TrafficSigns/00009.PNG "Traffic Sign 5"
+[image6]: ./examples/TrafficSigns/00007.png "Traffic Sign 3"
+[image7]: ./examples/TrafficSigns/00008.png "Traffic Sign 4"
+[image8]: ./examples/TrafficSigns/00009.png "Traffic Sign 5"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
