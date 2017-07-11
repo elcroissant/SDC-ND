@@ -4,7 +4,7 @@ import numpy as np
 
 lines = []
 
-with open('../../../data_track_1/driving_log.csv') as csvfile:
+with open('../../../data_track_1_320x240/driving_log.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         lines.append(line)
@@ -14,11 +14,15 @@ measurements = []
 for line in lines:
     source_path = line[0]
     filename = source_path.split('\\')[-1]
-    current_path = '../../../data_track_1/IMG/' + filename
+    current_path = '../../../data_track_1_320x240/IMG/' + filename
     image = cv2.imread(current_path)
+    image_flipped = np.fliplr(image)
     images.append(image)
+    images.append(image_flipped)
     measurement = float(line[3])
+    measurement_flipped = -measurement
     measurements.append(measurement)
+    measurements.append(measurement_flipped)
 
 X_train = np.array(images)
 y_train = np.array(measurements)
@@ -39,7 +43,7 @@ model.add(Dense(84))
 model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
-model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=7)
+model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=4)
 model.save('model.h5')
 
     
