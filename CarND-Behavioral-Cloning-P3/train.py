@@ -23,7 +23,7 @@ def steering_angles_extend(steering_center, steering_left, steering_right):
     steering_angles.append(-steering_right)
 
 
-with open("../../../data_track_1_320x240/driving_log.csv") as csvfile:
+with open("../../../data_track_1/driving_log.csv") as csvfile:
     reader = csv.reader(csvfile)
     for row in reader:
         steering_center = float(row[3])
@@ -34,7 +34,7 @@ with open("../../../data_track_1_320x240/driving_log.csv") as csvfile:
         steering_right = steering_center - correction
 
         # read in images from center, left and right cameras
-        path = "../../../data_track_1_320x240/IMG/" # fill in the path to your training IMG directory
+        path = "../../../data_track_1/IMG/" # fill in the path to your training IMG directory
         
         img_center = cv2.imread(path + row[0].split('\\')[-1])
         img_left = cv2.imread(path + row[1].split('\\')[-1])
