@@ -39,7 +39,7 @@ PYTHON scripts:
 * video.py for making video from IMG dictionary
 
 MODELS: 
-* model.h5 containing a trained convolution neural network with data of 3 laps of central driving, revert and recovery driving with shuffling in the generator 
+* model.h5 containing a trained convolution neural network with data of 3 laps of central driving, revert and recovery driving with shuffling in the generator *As this last model still needs some improvements I suggest to choose either model.h5_gen_all_no_shuffling or model.h5_gen_3laps_no_shuffling for the time being*
 *	model.h5_gen_all_no_shuffling containing a trained convolution neural network with data of 3 laps of central driving, revert and recovery driving with NO shuffling in the generator 
 * model.h5_gen_3laps_no_shuffling containing a trained convolution neural network with data of 3 laps of central driving with NO shuffling in the generator
 * model.h5_track_1_adv_3laps containing a trained convolution neural network with data of	3 laps of center driving, revert and recovery driving with NO generator
