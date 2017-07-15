@@ -11,12 +11,17 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/center.jpg "Grayscaling"
+[image2]: ./examples/center.jpg "Center camera (big)"
 [image3]: ./examples/recovery1.jpg "Recovery Image"
 [image4]: ./examples/recovery2.jpg "Recovery Image"
 [image5]: ./examples/recovery3.jpg "Recovery Image"
 [image6]: ./examples/normal.jpg "Normal Image"
 [image7]: ./examples/flip.jpg "Flipped Image"
+[image8]: ./examples/left_multicamera.jpg "Left camera"
+[image9]: ./examples/center_multicamera.jpg "Center camera"
+[image10]: ./examples/right_multicamera.jpg "Right camera"
+[image11]: ./examples/revert.jpg "Revert driving"
+
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -151,28 +156,77 @@ Here is a visualization of the architecture (note: visualizing the architecture 
 
 ####3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
-
+To capture good driving behavior, I first recorded three laps on track one using center lane driving. Here is an example image of center lane driving:
 ![alt text][image2]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I also took advantage of multicamera views being recorded for wich I applied 0.2 constant correction for the steering angle. Here are examples of the left, center and right imagas:
+![alt text][image8]
+![alt text][image9]
+![alt text][image10]
+
+With that data set prepared I trained the model I got the following results: 
+Train on 21835 samples, validate on 5459 samples
+Epoch 1/4
+21835/21835 [==============================] - 112s - loss: 0.0333 - val_loss: 0.0213
+Epoch 2/4
+21835/21835 [==============================] - 113s - loss: 0.0294 - val_loss: 0.0192
+Epoch 3/4
+21835/21835 [==============================] - 114s - loss: 0.0278 - val_loss: 0.0200
+Epoch 4/4
+21835/21835 [==============================] - 114s - loss: 0.0265 - val_loss: 0.0194
+
+
+I then recorded the vehicle going revert direction. Here is an example: 
+![alt text][image11]
+Here are the results from model training on 3 laps of center driving and one lap of revert driving:
+Train on 29030 samples, validate on 7258 samples
+Epoch 1/4
+29030/29030 [==============================] - 150s - loss: 0.0327 - val_loss: 0.0350
+Epoch 2/4
+29030/29030 [==============================] - 151s - loss: 0.0284 - val_loss: 0.0366
+Epoch 3/4
+29030/29030 [==============================] - 151s - loss: 0.0270 - val_loss: 0.0346
+Epoch 4/4
+29030/29030 [==============================] - 152s - loss: 0.0258 - val_loss: 0.0355
+
+To my surprise after adding revert road driving the car started to run faster and kind of recklessly.
+
+I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to how to steer back to the center (normal way of driging). These images show what a recovery looks like:
 
 ![alt text][image3]
 ![alt text][image4]
 ![alt text][image5]
 
-Then I repeated this process on track two in order to get more data points.
+And here is the output from the model driving. 
+Train on 50448 samples, validate on 12612 samples
+Epoch 1/4
+50448/50448 [==============================] - 261s - loss: 0.0463 - val_loss: 0.0739
+Epoch 2/4
+50448/50448 [==============================] - 262s - loss: 0.0423 - val_loss: 0.0702
+Epoch 3/4
+50448/50448 [==============================] - 262s - loss: 0.0404 - val_loss: 0.0734
+Epoch 4/4
+50448/50448 [==============================] - 262s - loss: 0.0384 - val_loss: 0.0718
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+In the next step I decided to add dropout layers between all fully connected layers with the connection loss to be 50%. 
+Though, that didn't help a lot as you can see below:
+Train on 50448 samples, validate on 12612 samples
+Epoch 1/4
+50448/50448 [==============================] - 260s - loss: 0.0526 - val_loss: 0.0684
+Epoch 2/4
+50448/50448 [==============================] - 263s - loss: 0.0471 - val_loss: 0.0700
+Epoch 3/4
+50448/50448 [==============================] - 262s - loss: 0.0452 - val_loss: 0.0700
+Epoch 4/4
+50448/50448 [==============================] - 263s - loss: 0.0436 - val_loss: 0.0711
+
+To augment the data sat, I also flipped images and angles thinking that this would help in generalization. For example, here is an image that has then been flipped:
 
 ![alt text][image6]
 ![alt text][image7]
 
-Etc ....
+After the collection process, I had 8408 number of data points. I then preprocessed this data by generator to produce additional data achieving eventually 6x more, meaning 50448 images and corresponding streering angle. 
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 2. I used an adam optimizer so that manually training the learning rate wasn't necessary.
