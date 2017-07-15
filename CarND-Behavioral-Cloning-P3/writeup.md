@@ -1,11 +1,3 @@
-#**Behavioral Cloning** 
-
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
-
 **Behavioral Cloning Project**
 
 The goals / steps of this project are the following:
@@ -35,10 +27,28 @@ The goals / steps of this project are the following:
 ####1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
+
+PYTHON scripts:
 * model.py containing the script to create and train the model
 * drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+* video.py for making video from IMG dictionary
+
+MODELS: 
+* model.h5 containing a trained convolution neural network with data of 3 laps of central driving, revert and recovery driving with shuffling in the generator 
+*	model.h5_gen_all_no_shuffling containing a trained convolution neural network with data of 3 laps of central driving, revert and recovery driving with NO shuffling in the generator 
+* model.h5_gen_3laps_no_shuffling containing a trained convolution neural network with data of 3 laps of central driving with NO shuffling in the generator
+* model.h5_track_1_adv_3laps containing a trained convolution neural network with data of	3 laps of center driving, revert and recovery driving with NO generator
+*	model.h5_track_1_adv_recover 	containing a trained convolution neural network with data of recovery driving with NO generator
+* model.h5_track_1_adv_revert 	containing a trained convolution neural network with data of revert driving with NO generator
+
+VIDEOS: 
+*	video.mp4 - video corresponding to model.h5
+* run5_gen_3laps_revert_recovery.mp4 - video corresponding to model.h5_gen_all_no_shuffling
+*	run6_gen_3laps_no_shuffling.mp4 - video corresponding to model.h5_gen_3laps_no_shuffling
+*	model.h5_track_1_adv_3laps.mp4 - video corresponding to model.h5_track_1_adv_3laps
+
+REPORTS:
+* writeup.md summarizing the results
 
 ####2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
