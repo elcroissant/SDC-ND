@@ -90,23 +90,23 @@ For details about how I created the training data, see the next section.
 
 ####1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+The overall strategy for deriving a model architecture was to collect as much data as possible by driving a car in the simulator, build a model, train and validate it and the verify results on simulator. Then if necessary augment data, use effective techniques to remove possible biases like left turn bias, non-central driving and similar.   
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+My first step was to use a convolution neural network model similar to the Nvidia model I thought this model might be appropriate because it was mentioned in the lecture as one of the possible choises to start with. I believe any convolution-based topology would work well, at least after approprite tuning of the hyper parameters or by adding additional convolutional layers to extract more features or increasing depths of the existing ones and adding dropout layer to reduce overfitting.  
 
 In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
-To combat the overfitting, I modified the model so that ...
+To combat the overfitting, I modified the model so that it takes advantage of dropout layers between all fully connected layers for classification. 
 
-Then I ... 
+Then I trained and validated the model on different data sets from multiple runs of center line driving, steering back to center or other direction driving. 
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track like different surface on the bridge or on the sharp bends or other places where not enough data was provided. To improve the driving behavior in these cases I had to provide more data and crop the image to focus only on significat part of the image and not on the irrelevent ones like trees, rocks, rivers etc. 
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
 ####2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture (model.py lines 125-129) consisted of a convolution neural network with the following layers and layer sizes 
 
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
