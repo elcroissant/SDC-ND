@@ -165,14 +165,22 @@ I also took advantage of multicamera views being recorded for wich I applied 0.2
 
 With that data set prepared I trained the model I got the following results: 
 
-*Train on 21835 samples, validate on 5459 samples
+Train on 21835 samples, validate on 5459 samples
+
 Epoch 1/4
+
 21835/21835 [==============================] - 112s - loss: 0.0333 - val_loss: 0.0213
+
 Epoch 2/4
+
 21835/21835 [==============================] - 113s - loss: 0.0294 - val_loss: 0.0192
+
 Epoch 3/4
+
 21835/21835 [==============================] - 114s - loss: 0.0278 - val_loss: 0.0200
+
 Epoch 4/4
+
 21835/21835 [==============================] - 114s - loss: 0.0265 - val_loss: 0.0194
 
 
@@ -182,14 +190,22 @@ I then recorded the vehicle going revert direction. Here is an example:
 
 Here are the results from model training on 3 laps of center driving and one lap of revert driving:
 
-*Train on 29030 samples, validate on 7258 samples
+Train on 29030 samples, validate on 7258 samples
+
 Epoch 1/4
+
 29030/29030 [==============================] - 150s - loss: 0.0327 - val_loss: 0.0350
+
 Epoch 2/4
+
 29030/29030 [==============================] - 151s - loss: 0.0284 - val_loss: 0.0366
+
 Epoch 3/4
+
 29030/29030 [==============================] - 151s - loss: 0.0270 - val_loss: 0.0346
+
 Epoch 4/4
+
 29030/29030 [==============================] - 152s - loss: 0.0258 - val_loss: 0.0355
 
 To my surprise after adding revert road driving the car started to run faster and kind of recklessly.
@@ -202,26 +218,41 @@ I then recorded the vehicle recovering from the left side and right sides of the
 
 And here is the output from the model driving. 
 
-*Train on 50448 samples, validate on 12612 samples
+Train on 50448 samples, validate on 12612 samples
+
 Epoch 1/450448/50448 [==============================] - 261s - loss: 0.0463 - val_loss: 0.0739
+
 Epoch 2/4
+
 50448/50448 [==============================] - 262s - loss: 0.0423 - val_loss: 0.0702
+
 Epoch 3/4
+
 50448/50448 [==============================] - 262s - loss: 0.0404 - val_loss: 0.0734
+
 Epoch 4/4
+
 50448/50448 [==============================] - 262s - loss: 0.0384 - val_loss: 0.0718
 
 In the next step I decided to add dropout layers between all fully connected layers with the connection loss to be 50%. 
 Though, that didn't help a lot as you can see below:
 
-*Train on 50448 samples, validate on 12612 samples
+Train on 50448 samples, validate on 12612 samples
+
 Epoch 1/4
+
 50448/50448 [==============================] - 260s - loss: 0.0526 - val_loss: 0.0684
+
 Epoch 2/4
+
 50448/50448 [==============================] - 263s - loss: 0.0471 - val_loss: 0.0700
+
 Epoch 3/4
+
 50448/50448 [==============================] - 262s - loss: 0.0452 - val_loss: 0.0700
+
 Epoch 4/4
+
 50448/50448 [==============================] - 263s - loss: 0.0436 - val_loss: 0.0711
 
 To augment the data sat, I also flipped images and angles thinking that this would help in generalization. For example, here is an image that has then been flipped:
