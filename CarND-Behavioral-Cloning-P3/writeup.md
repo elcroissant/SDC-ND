@@ -198,9 +198,9 @@ I then recorded the vehicle recovering from the left side and right sides of the
 ![alt text][image5]
 
 And here is the output from the model driving. 
+
 Train on 50448 samples, validate on 12612 samples
-Epoch 1/4
-50448/50448 [==============================] - 261s - loss: 0.0463 - val_loss: 0.0739
+Epoch 1/450448/50448 [==============================] - 261s - loss: 0.0463 - val_loss: 0.0739
 Epoch 2/4
 50448/50448 [==============================] - 262s - loss: 0.0423 - val_loss: 0.0702
 Epoch 3/4
@@ -210,6 +210,7 @@ Epoch 4/4
 
 In the next step I decided to add dropout layers between all fully connected layers with the connection loss to be 50%. 
 Though, that didn't help a lot as you can see below:
+
 Train on 50448 samples, validate on 12612 samples
 Epoch 1/4
 50448/50448 [==============================] - 260s - loss: 0.0526 - val_loss: 0.0684
