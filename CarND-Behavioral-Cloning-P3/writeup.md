@@ -69,17 +69,17 @@ The model.py file contains the code for training and saving the convolution neur
 
 ####1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with three 5x5 and two 3x3 filter sizes and depths between 24 and 64 (model.py lines 125-129) followed by flatten layer and four fully connected layers. The three first convolutions have a stride of 2x2. Between fully connected layers dropout layers have been added to reduce overfitting. Each convolution layer ends by RELU layer to introduce nonlinearity (code lines 125-129). The data is normalized in the model using a Keras lambda layer (code line 117). The data is cropped to focus on significant part of the image, meaning road and not surroudings like trees, lakes etc (code line 119).  
+My model consists of three convolution layers with 5x5 and two with 3x3 filter sizes and depths between 24 and 64 (model.py lines 125-129) followed by flatten layer and four fully connected layers. The three first convolutions have a stride of 2x2. Between fully connected layers dropout layers have been added to reduce overfitting. Each convolution layer ends by RELU layer to introduce nonlinearity (code lines 125-129). The data is normalized in the model using a Keras lambda layer (code line 117). The data is cropped to focus on significant part of the image, meaning road and not surroudings like trees, lakes etc (code line 119).  
 
 ####2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 132, 134, 136). 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code lines 58-59, 105-106, 147). 
-The model was trained and validated on extended data sets like views from additional cameras (code lines 83-84), horizontal flip images (code lines 13-15) to help with left turn bias and corresponding opposite sign of the steering measurements (code lines 25-27).
-The model was trained and validated with date from multiple runs, recovery driving like steering from edge to the middle or revert clock-wise driving (code lines 42-55) 
-The model takes advatage of the generator (code lines 67-106) producing 6x as many samples as input batch size, efectivelly giving 120 samples per batch (batch size * number of generated images). 
-The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. The appropriate videos have been attached to visualize some of the steps done on the way, see paragraph #1. 
-NOTE. The model generator uses shuffling method over whole samples set at the start of the generation and shuffling method over output batch samples at the end. However it appeard that this method doesn't work well enough for the training. My first guess is that the model doesn't work better on shuffled data because such data has no longer information about consecutive frames from videos. It may however generize better. This is something that needs to be anylize more deeply.     
+* The model contains dropout layers in order to reduce overfitting (model.py lines 132, 134, 136). 
+* The model was trained and validated on different data sets to ensure that the model was not overfitting (code lines 58-59, 105-106, 147). 
+* The model was trained and validated on extended data sets like views from additional cameras (code lines 83-84), horizontal flip images (code lines 13-15) to help with left turn bias and corresponding opposite sign of the steering measurements (code lines 25-27).
+* The model was trained and validated with date from multiple runs, recovery driving like steering from edge to the middle or revert clock-wise driving (code lines 42-55) 
+* The model takes advatage of the generator (code lines 67-106) producing 6x as many samples as input batch size, efectivelly giving 120 samples per batch (batch size * number of generated images). 
+* The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. The appropriate videos have been attached to visualize some of the steps done on the way, see paragraph #1. 
+* NOTE. The model generator uses shuffling method over whole samples set at the start of the generation and shuffling method over output batch samples at the end. However it appeard that this method doesn't work well enough for the training. My first guess is that the model doesn't work better on shuffled data because such data has no longer information about consecutive frames from videos. It may however generize better. This is something that needs to be anylize more deeply.     
 
 ####3. Model parameter tuning
 
@@ -115,7 +115,7 @@ At the end of the process, the vehicle is able to drive autonomously around the 
 The final model architecture (model.py lines 115-138) consis of a convolution neural network with the following layers and layer sizes: 
 
 Layer (type)                     Output Shape          Param #     Connected to
-====================================================================================================
+____________________________________________________________________________________________________
 lambda_1 (Lambda)                (None, 160, 320, 3)   0           lambda_input_1[0][0]
 ____________________________________________________________________________________________________
 cropping2d_1 (Cropping2D)        (None, 65, 320, 3)    0           lambda_1[0][0]
@@ -145,27 +145,27 @@ ________________________________________________________________________________
 dropout_3 (Dropout)              (None, 10)            0           dense_3[0][0]
 ____________________________________________________________________________________________________
 dense_4 (Dense)                  (None, 1)             11          dropout_3[0][0]
-====================================================================================================
+____________________________________________________________________________________________________
 Total params: 348,219
 Trainable params: 348,219
 Non-trainable params: 0
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
+____________________________________________________________________________________________________
 
 ####3. Creation of the Training Set & Training Process
 
 To capture good driving behavior, I first recorded three laps on track one using center lane driving. Here is an example image of center lane driving:
+
 ![alt text][image2]
 
 I also took advantage of multicamera views being recorded for wich I applied 0.2 constant correction for the steering angle. Here are examples of the left, center and right imagas:
+
 ![alt text][image8]
 ![alt text][image9]
 ![alt text][image10]
 
 With that data set prepared I trained the model I got the following results: 
-Train on 21835 samples, validate on 5459 samples
+
+*Train on 21835 samples, validate on 5459 samples
 Epoch 1/4
 21835/21835 [==============================] - 112s - loss: 0.0333 - val_loss: 0.0213
 Epoch 2/4
@@ -177,9 +177,12 @@ Epoch 4/4
 
 
 I then recorded the vehicle going revert direction. Here is an example: 
+
 ![alt text][image11]
+
 Here are the results from model training on 3 laps of center driving and one lap of revert driving:
-Train on 29030 samples, validate on 7258 samples
+
+*Train on 29030 samples, validate on 7258 samples
 Epoch 1/4
 29030/29030 [==============================] - 150s - loss: 0.0327 - val_loss: 0.0350
 Epoch 2/4
@@ -199,7 +202,7 @@ I then recorded the vehicle recovering from the left side and right sides of the
 
 And here is the output from the model driving. 
 
-Train on 50448 samples, validate on 12612 samples
+*Train on 50448 samples, validate on 12612 samples
 Epoch 1/450448/50448 [==============================] - 261s - loss: 0.0463 - val_loss: 0.0739
 Epoch 2/4
 50448/50448 [==============================] - 262s - loss: 0.0423 - val_loss: 0.0702
@@ -211,7 +214,7 @@ Epoch 4/4
 In the next step I decided to add dropout layers between all fully connected layers with the connection loss to be 50%. 
 Though, that didn't help a lot as you can see below:
 
-Train on 50448 samples, validate on 12612 samples
+*Train on 50448 samples, validate on 12612 samples
 Epoch 1/4
 50448/50448 [==============================] - 260s - loss: 0.0526 - val_loss: 0.0684
 Epoch 2/4
