@@ -64,23 +64,25 @@ The model.py file contains the code for training and saving the convolution neur
 
 ####1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
-
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+My model consists of a convolution neural network with three 5x5 and two 3x3 filter sizes and depths between 24 and 64 (model.py lines 125-129) followed by flatten layer and four fully connected layers. The three first convolutions have a stride of 2x2. Between fully connected layers dropout layers have been added to reduce overfitting. Each convolution layer ends by RELU layer to introduce nonlinearity (code lines 125-129). The data is normalized in the model using a Keras lambda layer (code line 117). The data is cropped to focus on significant part of the image, meaning road and not surroudings like trees, lakes etc (code line 119).  
 
 ####2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
-
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model contains dropout layers in order to reduce overfitting (model.py lines 132, 134, 136). 
+The model was trained and validated on different data sets to ensure that the model was not overfitting (code lines 58-59, 105-106, 147). 
+The model was trained and validated on extended data sets like views from additional cameras (code lines 83-84), horizontal flip images (code lines 13-15) to help with left turn bias and corresponding opposite sign of the steering measurements (code lines 25-27).
+The model was trained and validated with date from multiple runs, recovery driving like steering from edge to the middle or revert clock-wise driving (code lines 42-55) 
+The model takes advatage of the generator (code lines 67-106) producing 6x as many samples as input batch size, efectivelly giving 120 samples per batch (batch size * number of generated images). 
+The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. The appropriate videos have been attached to visualize some of the steps done on the way, see paragraph #1. 
+NOTE. The model generator uses shuffling method over whole samples set at the start of the generation and shuffling method over output batch samples at the end. However it appeard that this method doesn't work well enough for the training. My first guess is that the model doesn't work better on shuffled data because such data has no longer information about consecutive frames from videos. It may however generize better. This is something that needs to be anylize more deeply.     
 
 ####3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 142).
 
 ####4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road and clock-wise (revert) driving.
 
 For details about how I created the training data, see the next section. 
 
