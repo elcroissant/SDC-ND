@@ -18,7 +18,7 @@ The goals / steps of this project are the following:
 [image1]: ./output_images/undistort_output.jpg "Undistorted"
 [image2]: ./output_images/distortion_correction.jpg "Road Transformed"
 [image3]: ./output_images/threshold_output.jpg "Binary Example"
-[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
+[image4]: ./output_images/perspective_transform_output.jpg "Warp Example"
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./project_video_out.mp4 "Video"
@@ -58,31 +58,29 @@ The code for this step is contained in the sixth code cell of the IPython notebo
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+The code for my perspective transform includes a functions called `warp_img()` and `warp_road_img()` , which appear in 8th code cell of the Ipython notebook located in ".P4.ipynb".  The `warp_img()` function takes as inputs an image (`img`), source (`src_coords`) and destination (`dst_coords`) points as well as (`matrix_transform`) flag. The latter is to control which operation we are triggering, wheather it is perspective transform or inverse perspective transform.  The `warp_road_img()` defines source and destination points in the following manner:
+
 
 ```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
+   src = np.float32([[214,720], [580,460], [704,460], [1086,720]])
+    offset = [50,0]
+    
+    _top_left=np.array([src[0,0],0])
+    _top_right=np.array([src[3,0],0])
+    
+    dst = np.float32([src[0]+offset, _top_left+offset, _top_right-offset, src[3]-offset])
 ```
 
 This resulted in the following source and destination points:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 214, 720      | 264, 720      | 
+| 580, 460      | 264, 0        |
+| 704, 460      | 1036, 0       |
+| 1086, 720     | 1036, 720     |
 
-I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
+I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image. Here are examples of my output for this step:
 
 ![alt text][image4]
 
