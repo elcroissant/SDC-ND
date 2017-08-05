@@ -19,7 +19,7 @@ The goals / steps of this project are the following:
 [image2]: ./output_images/distortion_correction.jpg "Road Transformed"
 [image3]: ./output_images/threshold_output.jpg "Binary Example"
 [image4]: ./output_images/perspective_transform_output.jpg "Warp Example"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
+[image5]: ./output_images/sliding_windows.jpg "Sliding windows"
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./project_video_out.mp4 "Video"
 
@@ -47,12 +47,12 @@ At the end of this step camera matrix and distortion coefficients are stored in 
 
 #### 1. Provide an example of a distortion-corrected image.
 
-The code for this step is contained in the third code cell of the IPython notebook located in "./P4.ipynb". At the begining of this step data like camera matrix and distortion coefficients are restored from cal_pickle.p file. cv2.undistort function is then used with this data to apply distortion correction onto each image. Here are results for the tests files provided with the project:
+The code for this step is contained in the 3rd code cell of the IPython notebook located in "./P4.ipynb". At the begining of this step data like camera matrix and distortion coefficients are restored from cal_pickle.p file. cv2.undistort function is then used with this data to apply distortion correction onto each image. Here are results for the tests files provided with the project:
 ![alt text][image2]
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-The code for this step is contained in the sixth code cell of the IPython notebook located in "./P4.ipynb". I used a combination of gradient and channel thresholds to generate a binary image. For gradient threshold I used Sobel x operator with sx_thresh=(90, 150), which helped to detect most of the white lines. Then I used S channel threshold from HLS color space with s_thresh=(170, 255) to detect yellow lines. On top of that I added V channel threshold from HSV color space with v_thresh=(220,255) as it appeard to be useful to magnitude some of the dashed lines.  Here are examples of my output for this step. 
+The code for this step is contained in the 6th code cell of the IPython notebook located in "./P4.ipynb". I used a combination of gradient and channel thresholds to generate a binary image. For gradient threshold I used Sobel x operator with sx_thresh=(90, 150), which helped to detect most of the white lines. Then I used S channel threshold from HLS color space with s_thresh=(170, 255) to detect yellow lines. On top of that I added V channel threshold from HSV color space with v_thresh=(220,255) as it appeard to be useful to magnitude some of the dashed lines.  Here are examples of my output for this step. 
 
 ![alt text][image3]
 
@@ -86,7 +86,9 @@ I verified that my perspective transform was working as expected by drawing the 
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
+The code for this step is contained in the 10th code cell of the IPython notebook located in "./P4.ipynb" 
+
+After calibration, thresholding and a perspective transform applied to road image, we have a binary image where the lane lines stand out clearly. What we can do with that to identify lane-line pixes is as follows: we can take a histogram of the bottom half of the image then find the peak of the left and right halves. The peaks are our starting points for where to search for the lines. From that point I used sliding window to find and follow the lines. 
 
 ![alt text][image5]
 
