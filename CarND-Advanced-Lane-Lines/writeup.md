@@ -52,7 +52,7 @@ The code for this step is contained in the third code cell of the IPython notebo
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+The code for this step is contained in the sixth code cell of the IPython notebook located in "./P4.ipynb". I used a combination of gradient and channel thresholds to generate a binary image. For gradient threshold I used Sobel x operator with sx_thresh=(90, 150), which helped to detect most of the white lines. Then I used S channel threshold from HLS color space with s_thresh=(170, 255) to detect yellow lines. On top of that I added V channel threshold from HSV color space with v_thresh=(220,255) as it appeard to be useful to magnitude some of the dashed lines.  Here are examples of my output for this step. 
 
 ![alt text][image3]
 
