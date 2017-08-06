@@ -20,7 +20,7 @@ The goals / steps of this project are the following:
 [image3]: ./output_images/threshold_output.jpg "Binary Example"
 [image4]: ./output_images/perspective_transform_output.jpg "Warp Example"
 [image5]: ./output_images/sliding_windows.jpg "Sliding windows"
-[image6]: ./examples/example_output.jpg "Output"
+[image6]: ./output_images/output.jpg "Pipeline output"
 [video1]: ./project_video_out.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
@@ -88,17 +88,21 @@ I verified that my perspective transform was working as expected by drawing the 
 
 The code for this step is contained in the 10th code cell of the IPython notebook located in "./P4.ipynb" 
 
-After calibration, thresholding and a perspective transform applied to road image, we have a binary image where the lane lines stand out clearly. What we can do with that to identify lane-line pixes is as follows: we can take a histogram of the bottom half of the image then find the peak of the left and right halves. The peaks are our starting points for where to search for the lines. From that point I used sliding window to find and follow the lines. 
+After calibration, thresholding and a perspective transform applied to road image, we have a binary image where the lane lines stand out clearly. What we can do with that to identify lane-line pixes is as follows: we can take a histogram of the bottom half of the image then find the peak of the left and right halves. The peaks are our starting points for where to search for the lines. From that point I used sliding window to find and follow the lines. Here are example of my output for this step:
 
 ![alt text][image5]
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+The code for this step is contained in the 12th code cell of the IPython notebook located in "./P4.ipynb"
+
+According to the formula of radius of curvature for second order polynomial provided in the lecture we need first and second derivatives to be calculated. We then put the values directly to the formula. 
+
+In addition, to calculate distance from the center we assume that the center of the camera is exactly in the middle of the image, then we calculate x-positions (i.e. 'left_pix_base', 'right_pix_base') for both left and right lines/fits for the given y to be the bottom of the picture. We then calculate mean avarage and rescale it by meter per pixels in x dimention. 
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+I implemented this step in 12th code cells.  Here is an example of my result on a test image:
 
 ![alt text][image6]
 
