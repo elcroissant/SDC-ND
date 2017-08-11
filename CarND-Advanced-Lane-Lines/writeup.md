@@ -23,11 +23,6 @@ The goals / steps of this project are the following:
 [image6]: ./output_images/output.jpg "Pipeline output"
 [video1]: ./project_video_out.mp4 "Video"
 
-## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
-
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
-
----
 
 ### Writeup / README
 
@@ -94,7 +89,7 @@ After calibration, thresholding and a perspective transform applied to road imag
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-The code for this step is contained in the 12th code cell of the IPython notebook located in "./P4.ipynb"
+The code for this step is contained in the 14th code cell of the IPython notebook located in "./P4.ipynb"
 
 According to the formula of radius of curvature for second order polynomial provided in the lecture we need first and second derivatives to be calculated. We then put the values directly to the formula. 
 
@@ -102,7 +97,7 @@ In addition, to calculate distance from the center we assume that the center of 
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in 12th code cells.  Here is an example of my result on a test image:
+I implemented this step in 14th code cells.  Here is an example of my result on a test image:
 
 ![alt text][image6]
 
@@ -112,7 +107,7 @@ I implemented this step in 12th code cells.  Here is an example of my result on 
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](./project_video_out.mp4)
 
 ---
 
@@ -120,4 +115,4 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+One of the problem I faced when developing the project was to correctly filter out false lane lines. My initial approach for that was to play with gradient and color/channel thresholding and tune values of thresholds in such a way that all test images together would work with the same settings/thresholds. This approach, however, will not cover all the situation on the road. The good example here would be different surface illumination or driving at night. The possible ways how to overcome that would be to use deep Learning techniques to determine drivable area
