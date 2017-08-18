@@ -65,9 +65,9 @@ hist_bins = 16    # Number of histogram bins
 
 I decided to use spatial, histogram and HOG featrues all together as they achieved pretty much good results for linear clasification. 
 
-####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+I trained a linear SVM using 8792 examples of car images and 8968 examples of non-car images. Feature vector lenght, which contains spatial, histogram and HOG features, was 6960. It takes ~300 seconds to extract features and ~8 seconds to traing SVC. After extracting features has been normalized and then split up into randomized training and test data sets with the ratio to be 80% vs 20% appropriately. The achieved accuracy on the test set was ~98.7%. Example predition of 10 classes took around 0.003 seconds. The corresponding code can be found going through all the cells between 6th and 10th in the P5.ipynb jupyter notebook)
 
 ###Sliding Window Search
 
