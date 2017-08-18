@@ -21,26 +21,26 @@ The goals / steps of this project are the following:
 [video1]: ./project_video.mp4
 
 ---
-###Writeup / README
+Writeup / README
 
-###Histogram of Oriented Gradients (HOG)
+Histogram of Oriented Gradients (HOG)
 
-####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
+1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
+The code for this step is contained in the 3rd code cell of the IPython notebook (i.e. P5.ipynb). The first example of usege can be found in the 4th cell of the IPython notebook.   
 
-I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of two of each of the `vehicle` and `non-vehicle` classes:
 
 ![alt text][image1]
+The corresponding code can be found in the 2nd cell of the IPython notebook (i.e. P5.ipynb)
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
-
+Here is an example using the `YUV` color space and HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 ![alt text][image2]
 
-####2. Explain how you settled on your final choice of HOG parameters.
+2. Explain how you settled on your final choice of HOG parameters.
 
 I tried various combinations of parameters and...
 
