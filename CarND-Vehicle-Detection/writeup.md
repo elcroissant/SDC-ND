@@ -42,7 +42,28 @@ Here is an example using the `YUV` color space and HOG parameters of `orientatio
 
 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+I tried various combinations of parameters and my final set is 
+
+color_space = 'YUV'
+- YUV appeared to be much better than RGB, HSV, LUV, HLS and gave pretty much the same results as YCrCb. Both YUV adn YCrCb seem to be good candidates. 
+
+orient = 8  # HOG orientations 
+- increased HOG orienteation parameter gave better accuracy for linear clasiffier results, though, learning time increased singnificantly, thus decided to stay with 8 orientations 
+
+pix_per_cell = 4 # HOG pixels per cell
+- decreased pix_per_cel parameter didn't cause significant degradation in detection of the correct bboxes and helped with decreasing image processing time 
+
+cell_per_block = 1 # HOG cells per block
+- decreasing cell_per_block parameter didn't cause singnificate degradation in detecting correct bboxes and helped with decreasign image processing time
+
+hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
+- processing channels separetaly didn't give acceptable results, thus decided to go with ALL 
+
+spatial_size = (16, 16) # Spatial binning dimensions
+hist_bins = 16    # Number of histogram bins
+- spatially binned color and histograms of color in the feature vector made detecting black color car more robust, most likely dataset is not covering it good enough, so this is area to explore/verify with some additional datasets
+
+I decided to use spatial, histogram and HOG featrues all together as they achieved pretty much good results for linear clasification. 
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
