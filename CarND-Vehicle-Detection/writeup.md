@@ -13,9 +13,9 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 [image1]: ./output_images/car_not_car.png
 [image2]: ./output_images/HOG_example.jpg
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
-[image5]: ./examples/bboxes_and_heat.png
+[image3]: ./output_images/window_search.png
+[image4]: ./output_images/scale1_4_threshold5.jpg
+[image5]: ./output_images/scale1_threshold0.jpg
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
 [video1]: ./project_video.mp4
@@ -69,13 +69,22 @@ I decided to use spatial, histogram and HOG featrues all together as they achiev
 
 I trained a linear SVM using 8792 examples of car images and 8968 examples of non-car images. Feature vector lenght, which contains spatial, histogram and HOG features, was 6960. It takes ~300 seconds to extract features and ~8 seconds to traing SVC. After extracting features has been normalized and then split up into randomized training and test data sets with the ratio to be 80% vs 20% appropriately. The achieved accuracy on the test set was ~98.7%. Example predition of 10 classes took around 0.003 seconds. The corresponding code can be found going through all the cells between 6th and 10th in the P5.ipynb jupyter notebook)
 
-###Sliding Window Search
+Sliding Window Search
 
-####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+I decided to use hog-subsampling window search which uses number of cell to step instead of overlap. The cooresponding code can be found in the 13th cell of the P5.ipynb jupyter notebook. The simple example of how it works can be found in the 14th cell of the same jupyter notebook.
 
 ![alt text][image3]
+
+In the example above scale equal to 1.5 has been used with the cells_per_step parameter set to 2. In order to find best scale I had to used bbox heatmap to remove false postives. For details, have a look at the cell no 15. I then made some checks with different scale and heatmap threshold. From that excercise, I learned scale equal to 1 with threshold equal to 0 works best in terms of bounding box fit, but it was very slow. Very similar results I achieved also with scale equal to 1.4 and threshold equal to 5. See pictures below.
+
+SCALE = 1 and THRESHOLD = 0
+![alt text][image4]
+
+SCALE = 1.4 and THRESHOLD = 5
+![alt text][image5]
+
 
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
