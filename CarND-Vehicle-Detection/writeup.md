@@ -16,7 +16,7 @@ The goals / steps of this project are the following:
 [image3]: ./output_images/window_search.png
 [image4]: ./output_images/scale1_threshold0.jpg
 [image5]: ./output_images/scale1_4_threshold5.jpg
-[image6]: ./examples/labels_map.png
+[image6]: ./output_images/test_pipeline.jpg
 [image7]: ./examples/output_bboxes.png
 [video1]: ./project_video.mp4
 
@@ -86,42 +86,29 @@ SCALE = 1.4 and THRESHOLD = 5
 ![alt text][image5]
 
 
-####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
+2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+Ultimately I searched on two scales using YUV 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
-![alt text][image4]
+![alt text][image6]
 ---
 
 ### Video Implementation
 
-####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
+1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
 
+The sliding-window search plus classifier has been used to search for and identify vehicles in the videos provided. Video output has been generated with detected vehicle positions drawn - bounding boxes on each frame of video.
+Here's a [link to my video result](./project_video_out_out.mp4)
 
-####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
+2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
-
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
-
-### Here are six frames and their corresponding heatmaps:
-
-![alt text][image5]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
-
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
-
-
+I recorded the positions of positive detections in each 10 subsequent frames of the video which made the pipeline more robust and this significantly reduce number of false positives.  From the positive detections of 10 subsequent frames I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
 
 ---
 
-###Discussion
+Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+The biggest problem I faced was to find a right tread-off between robustness and performance, especially when comes to hundres of frames like in video. At the very begining I considered scale equal to 1 with cells_per_step set to 2 as very reliable mean for car position detection. Though, it appeared very soon that it is also very time consuming method which in case of video is also unacceptable. In order to decrease time required for video processing and to increase robustness I added bounding box tracker to take advantage of the cars position information from numbers of previous frames. That increased robustness. Thanks to that I was also able to decrease searching area. I introduced two scales one very fast which covers the whole bottom half of the frame with scale = 2 and the second one which covers upper part of the bottom half with scale=1. The first one is very useful to detect cars in close distance and the second one for those which are a little bit further from the observer. The pipeline still requires some improvements to make it useful in real time scenario. I believe I should resigned from scale 1 searching and maybe increase cells_per_steps parameter to make it faster. I think grayscale with HOG is worth to check as well as further limitation of the searching area. Removing histogram and spatial features and increasing number of subsequent frames being tracked should help to decease overall time a little bit.   
 
