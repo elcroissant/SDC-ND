@@ -14,8 +14,8 @@ The goals / steps of this project are the following:
 [image1]: ./output_images/car_not_car.png
 [image2]: ./output_images/HOG_example.jpg
 [image3]: ./output_images/window_search.png
-[image4]: ./output_images/scale1_4_threshold5.jpg
-[image5]: ./output_images/scale1_threshold0.jpg
+[image4]: ./output_images/scale1_threshold0.jpg
+[image5]: ./output_images/scale1_4_threshold5.jpg
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
 [video1]: ./project_video.mp4
